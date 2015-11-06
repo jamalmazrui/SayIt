@@ -1,19 +1,18 @@
 ' SayIt
-' Version 1.0
-' January 25, 2011
-' Copyright 2011 by Jamal Mazrui
+' Version 1.2
+' November 6, 2015
+' Copyright 2011 - 2015 by Jamal Mazrui
 ' GNU Lesser General Public License (LGPL)
 
-' #COMPILER PBWIN 9
+' Comment out for inclusion by SayLine.bas to create its executable
 #COMPILE DLL
 #DIM ALL
-
 #COM NAME "SayIt", 1
 #COM DOC "Detect the active screen reader, if any, and speak text through it"
 #COM GUID GUID$("{576D59B9-B599-42C7-AE21-23B6A737BB22}")
 #COM TLIB ON
 
-#INCLUDE ONCE "c:\pbwin90\winAPI\win32API.inc"
+#INCLUDE "Win32API.inc"
 
 DECLARE FUNCTION nvdaController_brailleMessage LIB "nvdaControllerClient32.dll " ALIAS "nvdaController_brailleMessage" (BYVAL sText AS STRING) AS LONG
 DECLARE FUNCTION nvdaController_CancelSpeech LIB "nvdaControllerClient32.dll " ALIAS "nvdaController_cancelSpeech" () AS LONG
@@ -31,7 +30,9 @@ CLASS SayIt $CSayItGuid AS COM
 Instance bUseSAPIAsBackup As Long
 
 Class Method Create
-bUseSAPIAsBackup = %False
+' Change default since SAPI probably wanted as backup speech
+' bUseSAPIAsBackup = %False
+bUseSAPIAsBackup = %True
 End Method
 
 INTERFACE ISayIt $ISayItGuid
@@ -47,8 +48,9 @@ METHOD JAWSIsActive <15> ALIAS "JAWSIsActive" AS LONG
 DIM sClass AS ASCIIZ * 260, sTitle AS ASCIIZ * 260
 
 sClass = "JFWUI2"
-sTitle = "JAWS"
-METHOD = ISTRUE FindWindow(sClass, sTitle)
+' Now title is "JAWS Professional or "JAWS Home Use" so just use class
+' METHOD = ISTRUE FindWindow(sClass, sTitle)
+METHOD = ISTRUE FindWindow(sClass, byVal 0)
 END METHOD
 
 METHOD JAWSRunFunction <20> ALIAS "JAWSRunFunction" (sFunction AS STRING) AS LONG

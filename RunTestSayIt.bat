@@ -1,3 +1,3 @@
 @echo off
 cls
-cscript.exe TestSayIt.vbs
+cscript.exe /nologo TestSayIt.vbs
